@@ -180,7 +180,11 @@ const AuthStack = () => {
 export default function Routes() {
   const {authState, dispatch} = useContext(AuthContext);
 
-  useEffect(async () => {
+  useEffect(() => {
+    restoreToken();
+  }, []);
+
+  const restoreToken = async () => {
     let userToken = null;
     try {
       const getToken = await AsyncStorage.getItem('userToken');
@@ -189,7 +193,7 @@ export default function Routes() {
       console.log('error restore token', error);
     }
     dispatch({type: 'RESTORE_TOKEN', userToken});
-  }, []);
+  };
 
   const signOut = async () => {
     await AsyncStorage.removeItem('userToken');

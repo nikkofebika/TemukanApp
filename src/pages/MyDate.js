@@ -1,62 +1,43 @@
 import React, {useState} from 'react';
-import {View, Button, Platform} from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import {Text} from 'native-base';
+import {View, Button, Image} from 'react-native';
+import ImageCropPicker from 'react-native-image-crop-picker';
+// import dummyImg from '../assets/img/dummy.png';
+const dummyImg = require('../assets/img/dummy.png');
 
 const MyDate = () => {
-  const [date, setDate] = useState(new Date());
-  const [mode, setMode] = useState('date');
-  const [show, setShow] = useState(false);
-  const [tanggal, setTanggal] = useState('kosong');
+  const [img, setImg] = useState(dummyImg);
 
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShow(Platform.OS === 'ios');
-    setDate(currentDate);
-
-    let tempDate = new Date(currentDate);
-    let fDate =
-      tempDate.getDate() +
-      '-' +
-      tempDate.getMonth() +
-      '-' +
-      tempDate.getFullYear();
-    let fTime = tempDate.getHours() + ':' + tempDate.getMinutes();
-    setTanggal(fDate + ' ' + fTime);
+  const selectFromGallery = () => {
+    ImageCropPicker.openPicker({
+      width: 300,
+      height: 400,
+      cropping: true,
+    }).then(image => {
+      setImg(image.path);
+      console.log('image', image);
+    });
   };
 
-  const showMode = currentMode => {
-    setShow(true);
-    setMode(currentMode);
-  };
-
-  const showDatepicker = () => {
-    showMode('date');
-  };
-
-  const showTimepicker = () => {
-    showMode('time');
+  const selectFromCamera = () => {
+    ImageCropPicker.openCamera({
+      width: 300,
+      height: 400,
+      cropping: true,
+    }).then(image => {
+      setImg(image.path);
+      console.log('image', image);
+    });
   };
 
   return (
     <View>
-      <Text>{tanggal}</Text>
+      <Image source={img} style={{width: 100, height: 100}} />
       <View>
-        <Button onPress={showDatepicker} title="Show date picker!" />
+        <Button onPress={selectFromGallery} title="Select From Gallery" />
       </View>
       <View>
-        <Button onPress={showTimepicker} title="Show time picker!" />
+        <Button onPress={selectFromCamera} title="Select From Camera" />
       </View>
-      {show && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={date}
-          mode={mode}
-          is24Hour={true}
-          display="default"
-          onChange={onChange}
-        />
-      )}
     </View>
   );
 };
